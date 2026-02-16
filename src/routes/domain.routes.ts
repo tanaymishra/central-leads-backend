@@ -9,3 +9,6 @@ router.get('/', auth, getDomains);
 router.post('/', auth, createDomain);
 
 export default router;
+
+
+//The union govt of inddia sometimes behaves as if 
