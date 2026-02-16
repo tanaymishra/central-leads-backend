@@ -28,14 +28,20 @@ export const createBlog = async (req: AuthRequest, res: Response) => {
     const { title, slug, content, excerpt, domain_id, status } = req.body;
     const author_id = req.user?.id || 1;
 
-    if (!title || !slug || !content || !domain_id) {
-      return res.status(400).json({ status: 'error', message: 'Title, slug, content and domain are required' });
-    }
+    console.log('Create Blog Payload Received:', req.body);
+
+    if (!title) return res.status(400).json({ status: 'error', message: 'Title is required' });
+    if (!slug) return res.status(400).json({ status: 'error', message: 'Slug is required' });
+    if (!content) return res.status(400).json({ status: 'error', message: 'Content is required' });
+    if (!domain_id) return res.status(400).json({ status: 'error', message: 'Domain ID is required' });
+
+    const parsedDomainId = parseInt(domain_id.toString());
+    if (isNaN(parsedDomainId)) return res.status(400).json({ status: 'error', message: 'Invalid Domain ID' });
 
     const result = await query(
       `INSERT INTO blogs (title, slug, content, excerpt, domain_id, author_id, status) 
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [title, slug, content, excerpt, domain_id, author_id, status || 'draft']
+      [title, slug, content, excerpt, parsedDomainId, author_id, status || 'draft']
     );
     res.status(201).json({ status: 'success', data: result.rows[0] });
   } catch (error: any) {

@@ -7,11 +7,13 @@ import {
     getPublicBlogDetail
 } from '../controllers/blog.controller';
 
+import { auth } from '../middlewares/auth.middleware';
+
 const router = Router();
 
 // Admin routes
-router.get('/', getBlogs);
-router.post('/', createBlog);
+router.get('/', auth, getBlogs);
+router.post('/', auth, createBlog);
 
 // Public routes for external integration
 router.get('/public/domain/:domain_id', getPublicBlogsByDomain);
