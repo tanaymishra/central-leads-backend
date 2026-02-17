@@ -24,7 +24,10 @@ export const getLeads = async (req: AuthRequest, res: Response) => {
  */
 export const createOrUpdateLead = async (req: AuthRequest, res: Response) => {
     try {
-        const { domain_id, first_name, last_name, email, phone, message, source, metadata } = req.body;
+        const {
+            domain_id, first_name, last_name, email, phone, message, source,
+            metadata, deadline, subject, files, word_count
+        } = req.body;
 
         if (!domain_id) {
             return res.status(400).json({ status: 'error', message: 'Domain ID is required' });
@@ -62,6 +65,10 @@ export const createOrUpdateLead = async (req: AuthRequest, res: Response) => {
             if (phone !== undefined) { updateFields.push(`phone = $${i++}`); values.push(phone); }
             if (message !== undefined) { updateFields.push(`message = $${i++}`); values.push(message); }
             if (source !== undefined) { updateFields.push(`source = $${i++}`); values.push(source); }
+            if (deadline !== undefined) { updateFields.push(`deadline = $${i++}`); values.push(deadline); }
+            if (subject !== undefined) { updateFields.push(`subject = $${i++}`); values.push(subject); }
+            if (files !== undefined) { updateFields.push(`files = $${i++}`); values.push(JSON.stringify(files)); }
+            if (word_count !== undefined) { updateFields.push(`word_count = $${i++}`); values.push(word_count); }
             if (metadata !== undefined) { updateFields.push(`metadata = metadata || $${i++}`); values.push(JSON.stringify(metadata)); }
 
             updateFields.push(`updated_at = NOW()`);
@@ -77,9 +84,12 @@ export const createOrUpdateLead = async (req: AuthRequest, res: Response) => {
         } else {
             // 3. Create new lead
             const result = await query(
-                `INSERT INTO leads (domain_id, first_name, last_name, email, phone, message, source, metadata) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-                [domain_id, first_name, last_name, email, phone, message, source, metadata || {}]
+                `INSERT INTO leads (domain_id, first_name, last_name, email, phone, message, source, metadata, deadline, subject, files, word_count) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
+                [
+                    domain_id, first_name, last_name, email, phone, message, source,
+                    metadata || {}, deadline, subject, files ? JSON.stringify(files) : '[]', word_count
+                ]
             );
             res.status(201).json({ status: 'success', data: result.rows[0], updated: false });
         }
