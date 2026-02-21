@@ -20,3 +20,10 @@ export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
         return res.status(401).json({ status: 'error', message: 'Invalid or expired token' });
     }
 };
+
+export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (req.user?.role !== 'ADMIN') {
+        return res.status(403).json({ status: 'error', message: 'Forbidden: Admin access only' });
+    }
+    next();
+};
