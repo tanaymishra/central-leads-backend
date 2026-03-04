@@ -4,7 +4,7 @@ import { auth, requireAdmin } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/', auth, requireAdmin, getDomains);
+router.get('/', auth, getDomains);
 router.post('/', auth, requireAdmin, createDomain);
 
 export default router;
