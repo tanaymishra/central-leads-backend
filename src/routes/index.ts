@@ -6,6 +6,7 @@ import domainRoutes from './domain.routes';
 import blogRoutes from './blog.routes';
 import leadRoutes from './lead.routes';
 import statsRoutes from './stats.routes';
+import userRoutes from './user.routes';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/domains', domainRoutes);
 router.use('/blogs', blogRoutes);
 router.use('/leads', leadRoutes);
 router.use('/stats', statsRoutes);
+router.use('/users', userRoutes);
 
 export default router;

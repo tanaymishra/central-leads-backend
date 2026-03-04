@@ -5,17 +5,29 @@ import { AuthRequest } from '../types';
 
 /**
  * Admin: Get all blogs (including drafts)
+ * Writer: Get only their own blogs
  */
 export const getBlogs = async (req: AuthRequest, res: Response) => {
   try {
-    const result = await query(`
+    let queryText = `
       SELECT b.*, d.name as domain_name 
       FROM blogs b 
       LEFT JOIN domains d ON b.domain_id = d.id 
-      ORDER BY b.created_at DESC
-    `);
+    `;
+    const queryParams: any[] = [];
+
+    // If user is a writer, filter by author_id
+    if (req.user?.role?.toLowerCase() === 'writer') {
+      queryText += ` WHERE b.author_id = $1 `;
+      queryParams.push(req.user.id);
+    }
+
+    queryText += ` ORDER BY b.created_at DESC `;
+
+    const result = await query(queryText, queryParams);
     res.status(200).json({ status: 'success', data: result.rows });
   } catch (error) {
+    console.error('Fetch blogs error:', error);
     res.status(500).json({ status: 'error', message: 'Failed to fetch blogs' });
   }
 };

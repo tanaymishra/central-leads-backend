@@ -37,3 +37,10 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
         }
     }
 };
+
+export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (req.user?.role !== 'ADMIN') {
+        return res.status(403).json({ status: 'error', message: 'Forbidden: Admin access only' });
+    }
+    next();
+};
