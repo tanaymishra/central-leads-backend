@@ -29,8 +29,9 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
             if (result.rows.length === 0) {
                 return res.status(401).json({ status: 'error', message: 'Invalid API Key' });
             }
+            const domain = result.rows[0];
             // Use a dummy user associated with the API key or set basic permissions
-            req.user = { id: 1, email: 'api@domain.com', name: 'API User', role: 'WRITER' };
+            req.user = { id: 1, email: 'api@domain.com', name: 'API User', role: 'WRITER', domain_id: domain.id };
             return next();
         } catch (error) {
             return res.status(500).json({ status: 'error', message: 'Failed to verify API key' });

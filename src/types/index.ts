@@ -6,6 +6,7 @@ export interface User {
     email: string;
     name: string;
     role: string;
+    domain_id?: number;
 }
 
 export interface AuthRequest extends Request {

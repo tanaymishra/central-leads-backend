@@ -5,6 +5,14 @@ import { AuthRequest } from '../types';
 
 export const getDomains = async (req: AuthRequest, res: Response) => {
     try {
+        if (req.user?.role === 'WRITER' && req.user?.domain_id) {
+            const result = await query(
+                'SELECT id, name, url, created_at, updated_at FROM domains WHERE id = $1',
+                [req.user.domain_id]
+            );
+            return res.status(200).json({ status: 'success', data: result.rows });
+        }
+
         const result = await query('SELECT * FROM domains ORDER BY created_at DESC');
         res.status(200).json({ status: 'success', data: result.rows });
     } catch (error) {
