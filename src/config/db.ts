@@ -4,9 +4,7 @@ import { config } from './index';
 
 const pool = new Pool({
     connectionString: process.env.DB_URL,
-    ssl: {
-        rejectUnauthorized: false // Required for Neon and many hosted PG instances
-    }
+    ssl: false
 });
 
 export const query = async (text: string, params?: any[]): Promise<QueryResult> => {
